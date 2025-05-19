@@ -43,7 +43,7 @@ First way to add the plugin is to add the following CLI options to your Traefik 
 
 ```bash
 --experimental.plugins.ddns-allowlist.modulename=github.com/Imaskiller/ddns-allowlist
---experimental.plugins.ddns-allowlist.version=v0.1.0
+--experimental.plugins.ddns-allowlist.version=v0.1.1
 ```
 
 ### yaml / Traefik Helm chart
@@ -55,7 +55,7 @@ experimental:
   plugins:
     ddns-allowlist:
       moduleName: "github.com/Imaskiller/ddns-allowlist"
-      version: v0.1.0
+      version: v0.1.1
 ```
 
 ## Configuration
