@@ -1,0 +1,11 @@
+This project is a fork of https://github.com/taskmedia/ddns-allowlist
+
+Original project copyright:
+Copyright 2020 Containous SAS
+Copyright 2020 Traefik Labs
+
+This software is licensed under the Apache License, Version 2.0.
+A copy of the license can be found in the LICENSE file.
+
+Any modifications to the original code are made in accordance with
+the terms of the Apache License, Version 2.0.

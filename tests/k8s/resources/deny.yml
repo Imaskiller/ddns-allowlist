@@ -1,0 +1,31 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: ddnsallowlist-deny
+spec:
+  plugin:
+    ddns-allowlist:
+      logLevel: TRACE
+      sourceRangeHosts:
+      - dns.google
+      # sourceRangeIps:
+      # - 1.2.3.4
+      # ipStrategy: {}
+      lookupInterval: 15
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: whoami-deny
+spec:
+  entryPoints:
+  - web
+  routes:
+  - match: Host(`deny.whoami.localhost`)
+    kind: Rule
+    services:
+    - name: whoami
+      port: 80
+    middlewares:
+    - name: ddnsallowlist-deny
+

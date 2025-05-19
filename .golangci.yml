@@ -1,0 +1,100 @@
+run:
+  timeout: 3m
+  modules-download-mode: readonly
+  # Skip auto-generated files.
+  skip-files:
+    - ".*\\.pb\\.go$"
+
+linters:
+  enable-all: true
+  disable:
+    - sqlclosecheck # not relevant (SQL)
+    - rowserrcheck # not relevant (SQL)
+    - execinquery # not relevant (SQL)
+    - cyclop # duplicate of gocyclo
+    - bodyclose # Too many false positives: https://github.com/timakin/bodyclose/issues/30
+    - dupl
+    - testpackage
+    - tparallel
+    - paralleltest
+    - nlreturn
+    - wsl
+    - exhaustive
+    - exhaustruct
+    - gomnd
+    - varnamelen
+    - wrapcheck
+    - exportloopref
+
+linters-settings:
+  forbidigo:
+    forbid:
+      - '^fmt\.Print'
+      - '^log\.'
+      - '^print$'
+      - '^println$'
+      - '^panic$'
+      - '^os\.Exit$'
+    exclude-godoc-examples: true
+  gofmt:
+    simplify: true
+  goheader:
+    values:
+      const:
+        AUTHOR: Imaskiller
+      regexp:
+        YEAR: 20\d\d
+    template: |-
+      Copyright (c) {{ YEAR }} {{ AUTHOR }}
+  importas:
+    no-unaliased: true
+    alias:
+      - pkg: github.com/Imaskiller/ddns-allowlist/pkg/log
+        alias: logger
+  revive:
+    rules:
+      - name: var-naming
+        disabled: false
+        arguments:
+          - ["ID"] # AllowList
+          - ["VM"] # DenyList
+  govet:
+    enable-all: true
+    disable:
+      - fieldalignment
+  gocyclo:
+    min-complexity: 12
+  goconst:
+    min-len: 5
+    min-occurrences: 4
+  misspell:
+    locale: US
+  funlen:
+    lines: -1
+    statements: 50
+  godox:
+    keywords:
+      - FIXME
+  gofumpt:
+    extra-rules: true
+  depguard:
+    rules:
+      testify:
+        files:
+          - "$test"
+        allow:
+          - $gostd
+          - github.com/stretchr/testify/assert
+          - github.com/stretchr/testify/require
+          - github.com/Imaskiller/ddns-allowlist
+
+issues:
+  exclude-use-default: false
+  max-same-issues: 0
+  exclude: []
+  exclude-rules:
+    - path: (.+)_test.go
+      linters:
+        - goconst
+        - funlen
+        - godot

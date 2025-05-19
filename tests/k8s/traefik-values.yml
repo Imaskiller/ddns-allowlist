@@ -1,0 +1,44 @@
+# Traefik installation with DDNS allowlist plugin
+
+# Plugin upstream
+# experimental:
+#   plugins:
+#     ddns-allowlist:
+#       moduleName: "github.com/Imaskiller/ddns-allowlist"
+#       version: v1.0.0
+
+# Plugin local
+deployment:
+  additionalVolumes:
+  - name: plugin-ddnswl
+    hostPath:
+      # requires: `minikube mount ./:/ddnswl`
+      path: /ddnswl
+      type: Directory
+additionalVolumeMounts:
+- name: plugin-ddnswl
+  mountPath: /plugins-local/src/github.com/Imaskiller/ddns-allowlist
+additionalArguments:
+- "--experimental.localPlugins.ddns-allowlist.modulename=github.com/Imaskiller/ddns-allowlist"
+
+globalArguments:
+- "--global.checknewversion=false"
+- "--global.sendanonymoususage=false"
+
+ingressRoute:
+  dashboard:
+    enabled: true
+
+logs:
+  general:
+    level: DEBUG
+
+ports:
+  traefik:
+    expose:
+      default: true
+  web:
+    exposedPort: 8080
+  websecure:
+    expose:
+      default: false

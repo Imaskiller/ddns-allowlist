@@ -1,0 +1,21 @@
+displayName: DDNS allowlist
+type: middleware
+
+import: github.com/Imaskiller/ddns-allowlist
+
+summary: 'A middleware that allows you to allowlist on a dynamic DNS'
+
+testData:
+  logLevel: ERROR
+  sourceRangeHosts:
+  - my.router.ddns.tld
+  sourceRangeIps:
+  - 1.2.3.4
+  # ipStrategy:
+  #   depth: 1
+  #   cloudflareDepth: 1
+  #   excludedIPs:
+  #     - 4.3.2.1
+  # allowedIPv6NetworkPrefix: 64
+  lookupInterval: 300
+  # dnsCacheTTL: 300

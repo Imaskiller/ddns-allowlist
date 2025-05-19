@@ -1,0 +1,59 @@
+version: '3'
+
+services:
+  traefik:
+    image: traefik:v2.10
+    container_name: "traefik"
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--entrypoints.web.address=:80"
+      - "--log.level=DEBUG"
+      - "--experimental.localPlugins.ddns-allowlist.modulename=github.com/Imaskiller/ddns-allowlist"
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./:/plugins-local/src/github.com/Imaskiller/ddns-allowlist:ro"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik.rule=Host(`traefik.docker.localhost`)"
+      - "traefik.http.routers.traefik.service=api@internal"
+      - "traefik.http.routers.traefik.entrypoints=web"
+      - "traefik.http.routers.traefik.middlewares=ddns-allowlist-router"
+      - "traefik.http.middlewares.ddns-allowlist-router.plugin.ddns-allowlist.logLevel=DEBUG"
+      - "traefik.http.middlewares.ddns-allowlist-router.plugin.ddns-allowlist.sourceRangeHosts=localhost"
+      - "traefik.http.middlewares.ddns-allowlist-router.plugin.ddns-allowlist.lookupInterval=60"
+
+  whoami:
+    image: traefik/whoami
+    container_name: "whoami"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.whoami.rule=Host(`whoami.docker.localhost`)"
+      - "traefik.http.routers.whoami.entrypoints=web"
+      - "traefik.http.routers.whoami.middlewares=ddns-allowlist-whoami"
+      - "traefik.http.middlewares.ddns-allowlist-whoami.plugin.ddns-allowlist.logLevel=DEBUG"
+      - "traefik.http.middlewares.ddns-allowlist-whoami.plugin.ddns-allowlist.sourceRangeHosts=localhost"
+      - "traefik.http.middlewares.ddns-allowlist-whoami.plugin.ddns-allowlist.lookupInterval=60"
+    # allow
+    - "traefik.http.routers.whoami-allow.rule=Host(`allow.whoami.localhost`)"
+    - "traefik.http.routers.whoami-allow.entrypoints=web"
+    - "traefik.http.routers.whoami-allow.middlewares=ddnsal-allow@docker"
+    - "traefik.http.middlewares.ddnsal-allow.plugin.ddns-allowlist.sourceRangeHosts=localhost,dockerhost"
+    - "traefik.http.middlewares.ddnsal-allow.plugin.ddns-allowlist.logLevel=TRACE"
+    - "traefik.http.middlewares.ddnsal-allow.plugin.ddns-allowlist.lookupInterval=15"
+    # deny
+    - "traefik.http.routers.whoami-deny.rule=Host(`deny.whoami.localhost`)"
+    - "traefik.http.routers.whoami-deny.entrypoints=web"
+    - "traefik.http.routers.whoami-deny.middlewares=ddnsal-deny@docker"
+    - "traefik.http.middlewares.ddnsal-deny.plugin.ddns-allowlist.sourceRangeHosts=localhost,dns.google"
+    - "traefik.http.middlewares.ddnsal-deny.plugin.ddns-allowlist.logLevel=TRACE"
+    - "traefik.http.middlewares.ddnsal-deny.plugin.ddns-allowlist.lookupInterval=15"
+    # # allow ipList
+    # - "traefik.http.routers.whoami-allowip.rule=Host(`allow-ip.whoami.localhost`)"
+    # - "traefik.http.routers.whoami-allowip.entrypoints=web"
+    # - "traefik.http.routers.whoami-allowip.middlewares=ddnsal-allowip@docker"
+    # - "traefik.http.middlewares.ddnsal-allowip.plugin.ddns-allowlist.sourceRangeHosts=localhost"
+    # - "traefik.http.middlewares.ddnsal-allowip.plugin.ddns-allowlist.ipList=192.168.65.1"
